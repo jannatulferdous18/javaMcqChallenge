@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "utf-8">
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+		<link rel="icon" href="logo.gif" type="image/x-icon">
+		<title>Java MCQ Challenge</title>
+	</head>
+
+	<body>
+		<!-- <button type="button" onclick="myFunction()">Try it</button> -->
+		<div class= "container">
+			<div id ="quizContent" class="row quiz">
+				<div class="col-sm-12">
+					<h2 id = "quizHeader"></h2>
+				</div>
+				<div id="questions" class="row">
+					<div class="col-sm-6"> <a data-id="1" class="btn btn-default answer " >1</a> </div>
+					<div class="col-sm-6"> <a data-id="2" class="btn btn-default answer " >2</a> </div>
+					<div class="col-sm-6"> <a data-id="3" class="btn btn-default answer " >3</a> </div>
+					<div class="col-sm-6"> <a data-id="4" class="btn btn-default answer " >4</a> </div>
+				</div>
+				<div class="row pageMovement">
+					<div id="btnPrevious" class="col-xs-5 col-sm-4 btn btn-primary pull-left">Previous</div>
+					<div id="btnNext" class="col-xs-5 col-sm-4 col-sm-offset-4 col-xs-offset-2 btn btn-primary pull-right">Next</div>
+				</div>
+				<div class = "row">
+					<div id = "submitQuiz" class = "btn btn-success btn-block  hide">Submit Quiz</div>
+				</div>
+				<div class="progress">
+					<div id = "progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+		 	var curPage = 0, correct = 0 ;
+			var myQuestion = document.getElementById("questions");
+			var myHeader = document.getElementById("quizHeader");
+			var btnNext = document.getElementById("btnNext");
+			var btnPrevious = document.getElementById("btnPrevious");
+			var classname = document.getElementsByClassName("answer");
+			var progressBar = document.getElementById("progressBar");
+			var btnNext = document.getElementById("btnNext");
+			var btnPrevious = document.getElementById("btnPrevious");
+			var btnSubmit = document.getElementById("submitQuiz");
+			var myAnswers = [];
+			var myQuiz =  [
+
+			[" 1. Which of the following is not OOPS concept in Java?" , 4 ,  "Inheritance",  "encapsulation",  "Polymorphism",  "Compilation" ],  
+			[" 2. Which of the following is a type of polymorphism in Java?" , 1 ,"Compile time polymorphism", "Execution time polymorphism", "Multiple polymorphism"," Multilevel polymorphism"] ,
+			[" 3. When does method overloading is determined?" , 2 ,"At run time", "At compile time", "At coding time"," At execution time"] ,
+			[" 4. Which concept of Java is a way of converting real world objects in terms of class?", 3 ,"Polymorphism", "Encapsulation", " Abstraction", "Inheritance"] ,
+			[" 5. Which concept of Java is achieved by combining methods and attribute into a class?" , 1 ," encapsulation", "Inheritance", "Abstraction"," Polymorphism"] ,
+			[" 6. What is it called if an object has its own lifecycle and there is no owner?" , 4 ,"Aggregation", "Composition", "encapsulation"," Association"] ,
+			[" 7. What is it called where child object gets killed if parent object is killed?" , 2 ,"Aggregation", "Composition", "encapsulation"," Association"]  ,
+			[" 8. What is it called where object has its own lifecycle and child object cannot belong to another parent object?" , 1 ,"Aggregation", "Composition", "encapsulation"," Association"] ,
+			[" 9. What is the size of char variable?" , 1 ,"8 bit", "16 bit", "32 bit"," 64 bit"] ,
+			[" 10. What is the default value of float variable?" , 1 ,"0.0f", "0.0d", "0","None"] 
+			];
+			
+			btnNext.addEventListener("click", moveNext);
+			btnPrevious.addEventListener("click", moveBack);
+			btnSubmit.addEventListener("click", quizFinish);
+			for (var i = 0; i < classname.length; i++) {
+				classname[i].addEventListener('click', myAnswer, false);
+			}
+			checkPage();
+			console.log(myQuestion);
+			console.log(myQuestion.children[0]);
+			console.log(myQuestion.children[1]);
+			console.log(myQuestion.children[2]);
+			console.log(myQuestion.children[3]);
+
+			function moveNext(){
+				<!-- check whetherthe current question is being answered or not -->
+				if(myAnswers[curPage]){
+					console.log("answered");
+					if(curPage < (myQuiz.length - 1) ){
+						curPage++;
+						checkPage(curPage);
+					}
+					else{
+					<!-- checks whether its in the last question  -->
+						if (myQuiz.length >= curPage) {
+							quizFinish();
+						}
+					}
+				}
+				else{
+					console.log("not answered");
+				}
+			}
+
+			function moveBack(){
+				if (curPage >0) {
+					curPage--;
+					checkPage(curPage);
+				}
+				else{
+					console.log("End of quiz" + curPage);
+				}
+			}
+			
+			<!-- Shows Question -->
+			function checkPage(i){
+			<!-- Showing the first column of the myQuiz curPage's first element which is the question  -->
+				myHeader.innerHTML = myQuiz[curPage][0];
+				
+				<!-- looping the values of myQuestion && traverse the DOM(myQuestion.children.length)-->
+				for(var i=0; i< myQuestion.children.length; i++){
+					var curNode = myQuestion.children[i];
+					console.log(curNode.childNodes[1].innerHTML);
+					curNode.childNodes[1].innerHTML=  capitalize(myQuiz[curPage][(i+2)]);
+				}
+				
+				<!-- update progress-bar -->
+				var increment = Math.ceil( (curPage) / (myQuiz.length)*100 );
+				progressBar.style.width = (increment) + '%' ;
+				progressBar.innerHTML = (increment) + '%' ;
+				
+				<!-- previous button disable at the first question page -->
+		         <!-- classList.add & classList.remove -> how we are adding/removing a class -->
+				if(curPage==0){
+					btnPrevious.classList.add("hide");
+				}
+				else{
+					btnPrevious.classList.remove("hide");
+				}
+				
+				<!-- next button disable at the last question page -->
+				if((curPage + 1) < (myQuiz.length)) {
+					btnNext.classList.remove("hide");
+				}
+				else{
+					btnNext.classList.add("hide");
+					btnSubmit.classList.remove("hide");
+				}
+				
+				<!-- //check if answered already -->
+				if (myAnswers[curPage] == (i + 1)) {
+					curNode.classList.add("selAnswer");
+				} 
+				else {
+					curNode.classList.remove("selAnswer");
+				}
+			}
+			
+			function myAnswer() {
+				var idAnswer = this.getAttribute("data-id");
+				<!-- Storing the answers in the myAnswers array-->
+				myAnswers[curPage] = idAnswer;
+				<!-- Check whether the answer is right/wrong -->
+				if(myQuiz[curPage][1] == idAnswer){
+					console.log("Right answer");
+				}
+				else{
+					console.log("Wrong answer");
+				}
+				addBox();
+			}
+			 <!-- making all the first character of the answers capital -->
+			function capitalize(str){
+				return str.substr(0, 1) . toUpperCase() + str.substr(1); 
+			}
+
+			<!-- -->
+			function quizFinish(){
+				if(myAnswers[curPage]) {
+					var output = "<div class='output'>Quiz Results<BR>";
+					var questionResult = "NA";
+				for (var i = 0; i < myAnswers.length; i++) {
+					if (myQuiz[i][1] == myAnswers[i]) {
+						questionResult = '<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>';
+						correct++;
+					}
+					else {
+					questionResult = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+					}
+					output = output + '<p>Question ' + (i + 1) + ' ' + questionResult + '</p> ';
+				}
+					output = output + '<p>You scored ' + correct + ' out of ' + myQuiz.length + '</p></div> ';
+					document.getElementById("quizContent").innerHTML = output;
+				}
+				else{
+					console.log("no SubmitBtn");
+				}
+			}
+			
+			function addBox() {
+				for (var i = 0; i < myQuestion.children.length; i++) {
+					var curNode = myQuestion.children[i];
+						if (myAnswers[curPage] == (i + 1)) {
+							curNode.classList.add("selAnswer");
+						} 
+						else {
+							curNode.classList.remove("selAnswer");
+						}
+				}
+			}
+		</script>
+		
+	</body>
+	
+</html>
